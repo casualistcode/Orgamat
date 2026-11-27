@@ -2,6 +2,7 @@ package de.tastenhalter
 
 import de.tastenhalter.core.OrganConfig
 import de.tastenhalter.midi.BundledSongs
+import de.tastenhalter.midi.DEFAULT_GROUP
 import de.tastenhalter.midi.MidiFileParser
 import de.tastenhalter.player.Arranger
 import org.junit.Assert.assertEquals
@@ -25,6 +26,7 @@ class BundledSongsTest {
         val cfg = OrganConfig()
         for (s in songs) {
             assertEquals("Lizenz von ${s.file}", "Public Domain", s.license)
+            assertTrue("Gruppe fehlt bei ${s.file}", s.group != DEFAULT_GROUP)
             val song = MidiFileParser.parse(File(dir, s.file).readBytes())
             val parts = song.parts.filter { !it.isDrums }.map { it.index }.toSet()
             val sched = Arranger.build(song, parts, 0, cfg)

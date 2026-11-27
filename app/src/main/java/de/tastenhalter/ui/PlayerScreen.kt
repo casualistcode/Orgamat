@@ -5,6 +5,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -111,11 +113,30 @@ fun PlayerScreen(vm: TastenhalterViewModel) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun BundledSongList(songs: List<BundledSong>, currentTitle: String?, onSelect: (BundledSong) -> Unit) {
+    val groups = remember(songs) { songs.map { it.group }.distinct() }
+    var group by rememberSaveable {
+        mutableStateOf(songs.firstOrNull { it.title == currentTitle }?.group ?: groups.firstOrNull().orEmpty())
+    }
     Panel {
-        Text("Mitgelieferte Lieder", style = MaterialTheme.typography.titleLarge, color = Gold)
-        songs.forEachIndexed { i, song ->
+        Text("Mitgelieferte Lieder (${songs.size})", style = MaterialTheme.typography.titleLarge, color = Gold)
+        if (groups.size > 1) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                groups.forEach { g ->
+                    ChoiceChip(
+                        "$g (${songs.count { it.group == g }})",
+                        selected = g == group,
+                        onClick = { group = g },
+                    )
+                }
+            }
+        }
+        songs.filter { it.group == group || groups.size <= 1 }.forEachIndexed { i, song ->
             if (i > 0) HorizontalDivider(color = Outline.copy(alpha = 0.5f))
             val current = song.title == currentTitle
             Column(

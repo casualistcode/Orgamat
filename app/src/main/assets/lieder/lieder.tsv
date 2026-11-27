@@ -1,18 +1,52 @@
-# Datei	Titel	Komponist	Quelle	Lizenz
-lobe_den_herren.mid	Lobe den Herren	Melodie: Stralsund 1665, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/lobe_den_Herren/lobe_den_Herren.mid	Public Domain
-ein_feste_burg.mid	Ein feste Burg ist unser Gott	Martin Luther	https://www.mutopiaproject.org/ftp/LutherM/ein_feste_burg/ein_feste_burg.mid	Public Domain
-jesus_meine_zuversicht.mid	Jesus, meine Zuversicht	Johann Crüger	https://www.mutopiaproject.org/ftp/CrugerJ/Jesus_meine_zuversicht/Jesus_meine_zuversicht.mid	Public Domain
-lobt_gott_ihr_christen.mid	Lobt Gott, ihr Christen allzugleich	Nikolaus Herman, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/Lobt_Gott/Lobt_Gott.mid	Public Domain
-vom_himmel_hoch.mid	Vom Himmel hoch, da komm ich her	Melodie: Leipzig 1539, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/von_himmel_hoch/von_himmel_hoch.mid	Public Domain
-es_ist_ein_ros_entsprungen.mid	Es ist ein Ros entsprungen	Melodie: Köln 1599, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/es_ist_ein_ros_entsprungen/es_ist_ein_ros_entsprungen.mid	Public Domain
-stille_nacht.mid	Stille Nacht, heilige Nacht	Franz Xaver Gruber	https://www.mutopiaproject.org/ftp/GruberFX/stille_nacht/stille_nacht.mid	Public Domain
-mit_freuden_zart.mid	Mit Freuden zart	Melodie: Böhmische Brüder 1566, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/mit_freuden_zart/mit_freuden_zart.mid	Public Domain
-allein_gott_in_der_hoeh.mid	Allein Gott in der Höh sei Ehr (aus „Paulus“)	Felix Mendelssohn Bartholdy	https://www.mutopiaproject.org/ftp/Mendelssohn-BartholdyF/O36/paulus_3/paulus_3.mid	Public Domain
-o_haupt_voll_blut.mid	O Haupt voll Blut und Wunden (Matthäus-Passion)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/O_Haupt_voll_Blut/O_Haupt_voll_Blut.mid	Public Domain
-aus_meines_herzens_grunde.mid	Aus meines Herzens Grunde (BWV 269)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV269/bwv_269/bwv_269.mid	Public Domain
-ich_dank_dir_lieber_herre.mid	Ich dank dir, lieber Herre (BWV 347)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV347/bwv347/bwv347.mid	Public Domain
-gott_wie_gross.mid	Gott, wie groß ist deine Güte (BWV 462)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV462/bwv_462/bwv_462.mid	Public Domain
-ermuntre_dich.mid	Ermuntre dich, mein schwacher Geist (BWV 454)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV454/bwv_454/bwv_454.mid	Public Domain
-grosser_gott.mid	Großer Gott, wir loben dich (op. 135a Nr. 10)	Max Reger	https://www.mutopiaproject.org/ftp/RegerM/O135a/reger_grosser_gott_wir_loben_dich/reger_grosser_gott_wir_loben_dich.mid	Public Domain
-jesu_meine_freude_bwv610.mid	Jesu, meine Freude (Orgelbüchlein, BWV 610)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV610/bwv610/bwv610.mid	Public Domain
-vom_himmel_hoch_bwv606.mid	Vom Himmel hoch (Orgelbüchlein, BWV 606)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV606/bwv606/bwv606.mid	Public Domain
+# Datei	Titel	Komponist	Quelle	Lizenz	Gruppe
+lobe_den_herren.mid	Lobe den Herren	Melodie: Stralsund 1665, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/lobe_den_Herren/lobe_den_Herren.mid	Public Domain	Choräle & Kirchenlieder
+ein_feste_burg.mid	Ein feste Burg ist unser Gott	Martin Luther	https://www.mutopiaproject.org/ftp/LutherM/ein_feste_burg/ein_feste_burg.mid	Public Domain	Choräle & Kirchenlieder
+jesus_meine_zuversicht.mid	Jesus, meine Zuversicht	Johann Crüger	https://www.mutopiaproject.org/ftp/CrugerJ/Jesus_meine_zuversicht/Jesus_meine_zuversicht.mid	Public Domain	Choräle & Kirchenlieder
+mit_freuden_zart.mid	Mit Freuden zart	Melodie: Böhmische Brüder 1566, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/mit_freuden_zart/mit_freuden_zart.mid	Public Domain	Choräle & Kirchenlieder
+allein_gott_in_der_hoeh.mid	Allein Gott in der Höh sei Ehr (aus „Paulus“)	Felix Mendelssohn Bartholdy	https://www.mutopiaproject.org/ftp/Mendelssohn-BartholdyF/O36/paulus_3/paulus_3.mid	Public Domain	Choräle & Kirchenlieder
+o_haupt_voll_blut.mid	O Haupt voll Blut und Wunden (Matthäus-Passion)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/O_Haupt_voll_Blut/O_Haupt_voll_Blut.mid	Public Domain	Choräle & Kirchenlieder
+aus_meines_herzens_grunde.mid	Aus meines Herzens Grunde (BWV 269)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV269/bwv_269/bwv_269.mid	Public Domain	Choräle & Kirchenlieder
+ich_dank_dir_lieber_herre.mid	Ich dank dir, lieber Herre (BWV 347)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV347/bwv347/bwv347.mid	Public Domain	Choräle & Kirchenlieder
+gott_wie_gross.mid	Gott, wie groß ist deine Güte (BWV 462)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV462/bwv_462/bwv_462.mid	Public Domain	Choräle & Kirchenlieder
+ermuntre_dich.mid	Ermuntre dich, mein schwacher Geist (BWV 454)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV454/bwv_454/bwv_454.mid	Public Domain	Choräle & Kirchenlieder
+wie_schoen_leuchtet.mid	Wie schön leuchtet der Morgenstern	Philipp Nicolai	https://www.mutopiaproject.org/ftp/NicolaiP/wie_schon_leuchtet/wie_schon_leuchtet.mid	Public Domain	Choräle & Kirchenlieder
+valet_will_ich_dir_geben.mid	Valet will ich dir geben	Melchior Teschner	https://www.mutopiaproject.org/ftp/TeschnerM/st_theodulph/st_theodulph.mid	Public Domain	Choräle & Kirchenlieder
+wer_nur_den_lieben_gott.mid	Wer nur den lieben Gott läßt walten	Georg Neumark	https://www.mutopiaproject.org/ftp/NeumarkG/bremen/bremen.mid	Public Domain	Choräle & Kirchenlieder
+schoenster_herr_jesu.mid	Schönster Herr Jesu	Melodie: Schlesien, traditionell	https://www.mutopiaproject.org/ftp/Traditional/crusaders_hymn/crusaders_hymn.mid	Public Domain	Choräle & Kirchenlieder
+der_mond_ist_aufgegangen.mid	Der Mond ist aufgegangen	Johann Abraham Peter Schulz	https://www.mutopiaproject.org/ftp/SchulzJAP/mond/mond.mid	Public Domain	Choräle & Kirchenlieder
+ich_ruf_zu_dir.mid	Ich ruf zu dir, Herr Jesu Christ	anonym	https://www.mutopiaproject.org/ftp/Anonymous/Ich_ruf/Ich_ruf.mid	Public Domain	Choräle & Kirchenlieder
+lobt_gott_ihr_christen.mid	Lobt Gott, ihr Christen allzugleich	Nikolaus Herman, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/Lobt_Gott/Lobt_Gott.mid	Public Domain	Advent & Weihnachten
+vom_himmel_hoch.mid	Vom Himmel hoch, da komm ich her	Melodie: Leipzig 1539, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/von_himmel_hoch/von_himmel_hoch.mid	Public Domain	Advent & Weihnachten
+es_ist_ein_ros_entsprungen.mid	Es ist ein Ros entsprungen	Melodie: Köln 1599, Satz anonym	https://www.mutopiaproject.org/ftp/Anonymous/es_ist_ein_ros_entsprungen/es_ist_ein_ros_entsprungen.mid	Public Domain	Advent & Weihnachten
+stille_nacht.mid	Stille Nacht, heilige Nacht	Franz Xaver Gruber	https://www.mutopiaproject.org/ftp/GruberFX/stille_nacht/stille_nacht.mid	Public Domain	Advent & Weihnachten
+herbei_o_ihr_glaeubigen.mid	Herbei, o ihr Gläub'gen (Adeste fideles)	John Francis Wade	https://www.mutopiaproject.org/ftp/WadeJF/adeste_fideles/adeste_fideles.mid	Public Domain	Advent & Weihnachten
+o_komm_immanuel.mid	O komm, o komm, Immanuel (Veni Emmanuel)	traditionell	https://www.mutopiaproject.org/ftp/Traditional/veniemma/veniemma.mid	Public Domain	Advent & Weihnachten
+freue_dich_welt.mid	Freue dich, Welt (Joy to the World)	nach Georg Friedrich Händel	https://www.mutopiaproject.org/ftp/HandelGF/antioch/antioch.mid	Public Domain	Advent & Weihnachten
+hark_the_herald.mid	Hark! The Herald Angels Sing	Felix Mendelssohn Bartholdy	https://www.mutopiaproject.org/ftp/Mendelssohn-BartholdyF/mendelssohn/mendelssohn.mid	Public Domain	Advent & Weihnachten
+the_first_noel.mid	The First Noel	traditionell	https://www.mutopiaproject.org/ftp/Traditional/first_noel/first_noel.mid	Public Domain	Advent & Weihnachten
+o_little_town.mid	O Little Town of Bethlehem	Lewis H. Redner	https://www.mutopiaproject.org/ftp/RednerLH/st_louis/st_louis.mid	Public Domain	Advent & Weihnachten
+in_the_bleak_midwinter.mid	In the Bleak Midwinter	Gustav Holst	https://www.mutopiaproject.org/ftp/HolstGT/cranham/cranham.mid	Public Domain	Advent & Weihnachten
+minuit_chretiens.mid	Minuit, chrétiens (O Holy Night)	Adolphe Adam	https://www.mutopiaproject.org/ftp/AdamA/minuit_chretiens/minuit_chretiens.mid	Public Domain	Advent & Weihnachten
+grosser_gott.mid	Großer Gott, wir loben dich (op. 135a Nr. 10)	Max Reger	https://www.mutopiaproject.org/ftp/RegerM/O135a/reger_grosser_gott_wir_loben_dich/reger_grosser_gott_wir_loben_dich.mid	Public Domain	Choralvorspiele für Orgel
+jesu_meine_freude_bwv610.mid	Jesu, meine Freude (Orgelbüchlein, BWV 610)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV610/bwv610/bwv610.mid	Public Domain	Choralvorspiele für Orgel
+vom_himmel_hoch_bwv606.mid	Vom Himmel hoch (Orgelbüchlein, BWV 606)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV606/bwv606/bwv606.mid	Public Domain	Choralvorspiele für Orgel
+nun_komm_der_heiden_heiland_bwv599.mid	Nun komm, der Heiden Heiland (BWV 599)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV599/bwv599/bwv599.mid	Public Domain	Choralvorspiele für Orgel
+gelobet_seist_du_bwv604.mid	Gelobet seist du, Jesu Christ (BWV 604)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV604/bwv604/bwv604.mid	Public Domain	Choralvorspiele für Orgel
+der_tag_der_ist_so_freudenreich_bwv605.mid	Der Tag, der ist so freudenreich (BWV 605)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV605/bwv605/bwv605.mid	Public Domain	Choralvorspiele für Orgel
+o_lamm_gottes_bwv618.mid	O Lamm Gottes, unschuldig (BWV 618)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV618/bwv618/bwv618.mid	Public Domain	Choralvorspiele für Orgel
+o_mensch_bewein_bwv622.mid	O Mensch, bewein dein Sünde groß (BWV 622)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV622/OMenschMut/OMenschMut.mid	Public Domain	Choralvorspiele für Orgel
+vater_unser_bwv636.mid	Vater unser im Himmelreich (BWV 636)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV636/bwv636/bwv636.mid	Public Domain	Choralvorspiele für Orgel
+alle_menschen_bwv643.mid	Alle Menschen müssen sterben (BWV 643)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV643/bwv643/bwv643.mid	Public Domain	Choralvorspiele für Orgel
+herzlich_tut_mich_verlangen_bwv727.mid	Herzlich tut mich verlangen (BWV 727)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV727/bwv727/bwv727.mid	Public Domain	Choralvorspiele für Orgel
+in_dulci_jubilo_bwv751.mid	In dulci jubilo (BWV 751)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV751/bwv751/bwv751.mid	Public Domain	Choralvorspiele für Orgel
+ach_bleib_bei_uns_bwv649.mid	Ach bleib bei uns, Herr Jesu Christ (BWV 649)	Johann Sebastian Bach	https://www.mutopiaproject.org/ftp/BachJS/BWV649/bwv649/bwv649.mid	Public Domain	Choralvorspiele für Orgel
+erhalt_uns_herr_buxwv185.mid	Erhalt uns, Herr, bei deinem Wort (BuxWV 185)	Dieterich Buxtehude	https://www.mutopiaproject.org/ftp/BuxtehudeD/Wv185/BuxWv185/BuxWv185.mid	Public Domain	Choralvorspiele für Orgel
+nun_bitten_wir_buxwv208.mid	Nun bitten wir den Heiligen Geist (BuxWV 208)	Dieterich Buxtehude	https://www.mutopiaproject.org/ftp/BuxtehudeD/Wv208/buxtehude_Wv208_nun_bitten_wir/buxtehude_Wv208_nun_bitten_wir.mid	Public Domain	Choralvorspiele für Orgel
+amazing_grace.mid	Amazing Grace (New Britain)	traditionell	https://www.mutopiaproject.org/ftp/Anonymous/new_britain/new_britain.mid	Public Domain	Internationale Hymnen
+holy_holy_holy.mid	Holy, Holy, Holy (Nicaea)	John Bacchus Dykes	https://www.mutopiaproject.org/ftp/DykesJB/nicaea/nicaea.mid	Public Domain	Internationale Hymnen
+ode_an_die_freude.mid	Ode an die Freude	Ludwig van Beethoven	https://www.mutopiaproject.org/ftp/BeethovenLv/ode/ode.mid	Public Domain	Internationale Hymnen
+nearer_my_god.mid	Nearer, My God, to Thee	Lowell Mason	https://www.mutopiaproject.org/ftp/MasonL/nmgtt/nmgtt.mid	Public Domain	Internationale Hymnen
+abide_with_me.mid	Abide with Me (Eventide)	William Henry Monk	https://www.mutopiaproject.org/ftp/MonkWH/eventide/eventide.mid	Public Domain	Internationale Hymnen
+o_god_our_help.mid	O God, Our Help in Ages Past (St. Anne)	William Croft	https://www.mutopiaproject.org/ftp/CroftW/st_anne/st_anne.mid	Public Domain	Internationale Hymnen
+cwm_rhondda.mid	Cwm Rhondda (Guide Me, O Thou Great Redeemer)	John Hughes	https://www.mutopiaproject.org/ftp/HughesJ/CwmRhondda/CwmRhondda.mid	Public Domain	Internationale Hymnen
+old_hundredth.mid	Old Hundredth (Genfer Psalter)	Louis Bourgeois	https://www.mutopiaproject.org/ftp/BourgeoisL/Old100/Old100.mid	Public Domain	Internationale Hymnen
