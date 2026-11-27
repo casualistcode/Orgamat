@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="tastenhalter_background">#FF111215</color>
-    <color name="ic_launcher_background">#FF1B1D22</color>
+    <color name="tastenhalter_background">#FF0C0B0A</color>
+    <color name="ic_launcher_background">#FF0C0B0A</color>
 
     <style name="Theme.Tastenhalter" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/tastenhalter_background</item>

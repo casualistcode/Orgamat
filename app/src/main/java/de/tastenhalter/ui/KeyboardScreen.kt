@@ -2,6 +2,7 @@ package de.tastenhalter.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -36,21 +37,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.tastenhalter.TastenhalterViewModel
-import de.tastenhalter.core.NoteNames
+import de.tastenhalter.control.RunController
 import de.tastenhalter.core.Organ
 import de.tastenhalter.core.OrganConfig
+import de.tastenhalter.tuning.Temperaments
 import kotlin.math.min
 
-private val KeyWhite = Color(0xFFF3EFE6)
-private val KeyBlack = Color(0xFF1A1A1C)
-private val KeyActiveWhite = Color(0xFFFFC857)
-private val KeyActiveBlack = Color(0xFFE09A2B)
+private val KeyIvory = Color(0xFFEDE6DA)
+private val KeyEbony = Color(0xFF1E1C1A)
+private val KeyOnWhite = Palette.Orange
+private val KeyOnBlack = Color(0xFFE08A2B)
 
 @Composable
 fun KeyboardScreen(vm: TastenhalterViewModel) {
@@ -60,85 +62,156 @@ fun KeyboardScreen(vm: TastenhalterViewModel) {
     val firstWhiteRaw by vm.keyboardFirstWhite.collectAsStateWithLifecycle()
     val keysSetting by vm.keyboardKeys.collectAsStateWithLifecycle()
     val cfg by Organ.config.collectAsStateWithLifecycle()
-    val totalWhites = cfg.whiteKeys.size
+    val run by vm.run.state.collectAsStateWithLifecycle()
 
+    KeyboardContent(
+        cfg = cfg,
+        active = active,
+        held = held,
+        holdMode = holdMode,
+        firstWhiteRaw = firstWhiteRaw,
+        keysSetting = keysSetting,
+        run = run,
+        onFirstWhite = vm::setKeyboardFirstWhite,
+        onHoldMode = { vm.keyboard.setHoldMode(!holdMode) },
+        onReleaseAll = vm.keyboard::releaseHeld,
+        onRun = vm.run::toggle,
+        onDown = vm.keyboard::down,
+        onUp = vm.keyboard::up,
+    )
+}
+
+@Composable
+fun KeyboardContent(
+    cfg: OrganConfig,
+    active: Set<Int>,
+    held: Set<Int>,
+    holdMode: Boolean,
+    firstWhiteRaw: Int,
+    keysSetting: Int?,
+    run: RunController.State,
+    onFirstWhite: (Int) -> Unit,
+    onHoldMode: () -> Unit,
+    onReleaseAll: () -> Unit,
+    onRun: () -> Unit,
+    onDown: (Int) -> Unit,
+    onUp: (Int) -> Unit,
+) {
+    val total = cfg.whiteKeys.size
     BoxWithConstraints(
         Modifier
             .fillMaxSize()
-            .padding(12.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        val autoCount = (maxWidth / 56.dp).toInt().coerceIn(7, totalWhites)
-        val count = (keysSetting ?: autoCount).coerceIn(7, totalWhites)
-        val maxFirst = totalWhites - count
+        val landscape = maxWidth > maxHeight
+        val autoCount = (maxWidth / 52.dp).toInt().coerceIn(7, total)
+        val count = (keysSetting ?: autoCount).coerceIn(7, total)
+        val maxFirst = total - count
         val first = firstWhiteRaw.coerceIn(0, maxFirst)
-        val last = min(first + count, totalWhites) - 1
+        val last = min(first + count, total) - 1
+        val rangeLabel = "${Temperaments.noteName(cfg.whiteKeys[first])} – ${Temperaments.noteName(cfg.whiteKeys[last])}"
 
-        Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                ChoiceChip(
-                    if (holdMode) "Haltemodus: AN" else "Haltemodus: AUS",
-                    selected = holdMode,
-                    onClick = { vm.keyboard.setHoldMode(!holdMode) },
-                    modifier = Modifier.weight(1f),
+        val nav: @Composable () -> Unit = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RoundButton(
+                    Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Oktave tiefer",
+                    { onFirstWhite((first - 7).coerceIn(0, maxFirst)) }, size = 44.dp, enabled = first > 0,
                 )
-                SecondaryButton(
-                    "Alle los",
-                    onClick = vm.keyboard::releaseHeld,
-                    enabled = held.isNotEmpty(),
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                BigButton(
-                    "Oktave",
-                    onClick = { vm.setKeyboardFirstWhite((first - 7).coerceIn(0, maxFirst)) },
-                    enabled = first > 0,
-                    modifier = Modifier.weight(1f),
-                    containerColor = PanelColor,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    leadingIcon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                )
-                BigButton(
-                    "Oktave",
-                    onClick = { vm.setKeyboardFirstWhite((first + 7).coerceIn(0, maxFirst)) },
-                    enabled = first < maxFirst,
-                    modifier = Modifier.weight(1f),
-                    containerColor = PanelColor,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                )
-            }
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    "${NoteNames.name(cfg.whiteKeys[first])} – ${NoteNames.name(cfg.whiteKeys[last])}",
-                    style = MaterialTheme.typography.titleMedium,
+                    rangeLabel,
+                    style = NoteStyle,
+                    fontSize = 19.sp,
+                    color = Palette.Text,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.width(120.dp),
+                )
+                RoundButton(
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight, "Oktave höher",
+                    { onFirstWhite((first + 7).coerceIn(0, maxFirst)) }, size = 44.dp, enabled = first < maxFirst,
+                )
+            }
+        }
+        val actions: @Composable () -> Unit = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Pill(if (holdMode) "Halten an" else "Halten", holdMode, onHoldMode)
+                Pill(
+                    if (run.running) "Durchlauf stoppen" else "Durchlauf",
+                    run.running,
+                    onRun,
+                    color = Palette.Blue,
+                )
+            }
+        }
+        val footer: @Composable () -> Unit = {
+            Row(
+                Modifier.fillMaxWidth().height(32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val text = when {
+                    run.running && run.note != null -> "Durchlauf · ${Temperaments.noteName(run.note)}"
+                    held.isNotEmpty() -> "Gehalten: " + held.sorted().joinToString("  ") { Temperaments.noteName(it) }
+                    holdMode -> "Tippen schaltet einen Ton an oder aus"
+                    else -> "Ton klingt, solange die Taste gedrückt ist"
+                }
+                Text(
+                    text,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (run.running || held.isNotEmpty()) Palette.Text else Palette.Muted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
                 )
-                Text("Tasten", style = MaterialTheme.typography.bodyMedium)
-                SquareButton("−", onClick = { vm.setKeyboardKeys(count - 2) }, enabled = count > 7, size = 52.dp)
-                SquareButton("+", onClick = { vm.setKeyboardKeys(count + 2) }, enabled = count < totalWhites, size = 52.dp)
+                if (held.isNotEmpty()) {
+                    Text(
+                        "Alle los",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Palette.Orange,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(onClick = onReleaseAll)
+                            .padding(horizontal = 10.dp, vertical = 4.dp),
+                    )
+                }
             }
+        }
 
+        Column(Modifier.fillMaxSize()) {
+            if (landscape) {
+                Row(
+                    Modifier.fillMaxWidth().height(52.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    nav()
+                    Spacer(Modifier.weight(1f))
+                    actions()
+                }
+            } else {
+                Row(
+                    Modifier.fillMaxWidth().height(56.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) { nav() }
+            }
             OrganKeyboard(
                 config = cfg,
                 firstWhite = first,
                 whiteCount = count,
                 active = active,
                 held = held,
-                onDown = vm.keyboard::down,
-                onUp = vm.keyboard::up,
+                onDown = onDown,
+                onUp = onUp,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
             )
-
-            val info = if (holdMode) {
-                if (held.isEmpty()) "Haltemodus: Taste antippen = Ton an, nochmal antippen = Ton aus."
-                else "Gehalten: " + held.sorted().joinToString(", ") { NoteNames.name(it) }
-            } else {
-                "Ton klingt, solange die Taste gedrückt ist."
+            footer()
+            if (!landscape) {
+                Row(
+                    Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ) { actions() }
             }
-            Text(info, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -156,43 +229,27 @@ fun OrganKeyboard(
 ) {
     BoxWithConstraints(modifier.clipToBounds()) {
         val ww = maxWidth / whiteCount
-        val bw = ww * 0.62f
+        val bw = ww * 0.6f
         val bh = maxHeight * 0.6f
         val end = min(firstWhite + whiteCount, config.whiteKeys.size)
         for (i in firstWhite until end) {
             val note = config.whiteKeys[i]
             key(note) {
                 PianoKey(
-                    note = note,
-                    white = true,
-                    sounding = note in active,
-                    held = note in held,
-                    onDown = onDown,
-                    onUp = onUp,
-                    modifier = Modifier
-                        .offset(x = ww * (i - firstWhite))
-                        .width(ww)
-                        .fillMaxHeight(),
+                    note, white = true, sounding = note in active, held = note in held,
+                    onDown = onDown, onUp = onUp,
+                    modifier = Modifier.offset(x = ww * (i - firstWhite)).width(ww).fillMaxHeight(),
                 )
             }
         }
         for (note in config.blackKeys) {
-            // Schwarze Taste sitzt rechts neben der weißen Taste darunter (ggf. außerhalb des Umfangs).
-            val leftWhite = config.whiteIndex(note - 1).takeIf { it >= 0 } ?: -1
-            val rel = leftWhite - firstWhite
+            val rel = config.whiteIndex(note - 1) - firstWhite
             if (rel < -1 || rel >= whiteCount) continue
             key(note) {
                 PianoKey(
-                    note = note,
-                    white = false,
-                    sounding = note in active,
-                    held = note in held,
-                    onDown = onDown,
-                    onUp = onUp,
-                    modifier = Modifier
-                        .offset(x = ww * (rel + 1) - bw / 2)
-                        .width(bw)
-                        .height(bh),
+                    note, white = false, sounding = note in active, held = note in held,
+                    onDown = onDown, onUp = onUp,
+                    modifier = Modifier.offset(x = ww * (rel + 1) - bw / 2).width(bw).height(bh),
                 )
             }
         }
@@ -212,18 +269,18 @@ private fun PianoKey(
     val down by rememberUpdatedState(onDown)
     val up by rememberUpdatedState(onUp)
     val bg = when {
-        sounding && white -> KeyActiveWhite
-        sounding -> KeyActiveBlack
-        white -> KeyWhite
-        else -> KeyBlack
+        sounding && white -> KeyOnWhite
+        sounding -> KeyOnBlack
+        white -> KeyIvory
+        else -> KeyEbony
     }
-    val shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+    val shape = RoundedCornerShape(bottomStart = 7.dp, bottomEnd = 7.dp)
     Box(
         modifier
-            .padding(horizontal = if (white) 1.5.dp else 0.dp)
+            .padding(horizontal = if (white) 1.dp else 0.dp)
             .clip(shape)
             .background(bg)
-            .border(1.dp, if (white) Color(0xFF6A6A6A) else Color.Black, shape)
+            .then(if (!white) Modifier.border(1.dp, Color.Black.copy(alpha = 0.6f), shape) else Modifier)
             .pointerInput(note) {
                 awaitEachGesture {
                     awaitFirstDown(requireUnconsumed = false).consume()
@@ -239,24 +296,23 @@ private fun PianoKey(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(bottom = 10.dp),
+            modifier = Modifier.padding(bottom = 8.dp),
         ) {
             if (held) {
                 Box(
                     Modifier
-                        .size(12.dp)
+                        .size(8.dp)
                         .clip(CircleShape)
-                        .background(Danger)
+                        .background(if (white) Palette.Ground else Palette.Text)
                 )
                 Spacer(Modifier.height(6.dp))
             }
             if (white) {
                 Text(
-                    NoteNames.name(note),
-                    color = Color(0xFF2A2A2A),
-                    fontSize = 15.sp,
-                    fontWeight = if (note % 12 == 0) FontWeight.Bold else FontWeight.Normal,
-                    textAlign = TextAlign.Center,
+                    Temperaments.noteName(note),
+                    style = NoteStyle,
+                    fontSize = 13.sp,
+                    color = Color(0xFF5A544C),
                     maxLines = 1,
                 )
             }

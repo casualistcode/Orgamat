@@ -24,6 +24,7 @@ class MidiPlayer(private val out: OrganOutput, private val scope: CoroutineScope
 
     data class UiState(
         val fileName: String? = null,
+        val subtitle: String? = null,
         val parts: List<MidiPart> = emptyList(),
         val selected: Set<Int> = emptySet(),
         val transpose: Int = 0,
@@ -70,13 +71,16 @@ class MidiPlayer(private val out: OrganOutput, private val scope: CoroutineScope
     fun setLoading() = _state.update { it.copy(loading = true, error = null) }
     fun setError(message: String) = _state.update { it.copy(loading = false, error = message) }
 
-    fun load(fileName: String, newSong: MidiSong) = onPlayer {
+    fun load(fileName: String, newSong: MidiSong, subtitle: String? = null) = onPlayer {
         halt()
         song = newSong
         val all = newSong.parts.map { it.index }.toSet()
         val sel = newSong.parts.filter { !it.isDrums }.map { it.index }.toSet().ifEmpty { all }
         _state.update {
-            UiState(fileName = fileName, parts = newSong.parts, selected = sel, tempoPercent = it.tempoPercent)
+            UiState(
+                fileName = fileName, subtitle = subtitle, parts = newSong.parts, selected = sel,
+                tempoPercent = it.tempoPercent,
+            )
         }
         rebuild()
     }

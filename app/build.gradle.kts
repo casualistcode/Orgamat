@@ -12,8 +12,8 @@ android {
         applicationId = "de.tastenhalter"
         minSdk = 29
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.5"
+        versionCode = 7
+        versionName = "2.0"
     }
 
     buildTypes {
@@ -42,6 +42,17 @@ android {
         compose = true
     }
 
+    testOptions {
+        unitTests {
+            // Für die Bildschirmfotos (Robolectric) werden die App-Ressourcen gebraucht.
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty("roborazzi.test.record", "true")
+                it.maxHeapSize = "2g"
+            }
+        }
+    }
+
     lint {
         checkReleaseBuilds = false
         abortOnError = false
@@ -62,7 +73,15 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
 
     testImplementation("junit:junit:4.13.2")
+
+    // Bildschirmfotos der Oberfläche auf dem Rechner (nur Debug-Tests, nicht in der App)
+    testImplementation(composeBom)
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.32.2")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.32.2")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

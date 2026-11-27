@@ -2,28 +2,45 @@ package de.tastenhalter.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.FolderOpen
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +51,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.tastenhalter.TastenhalterViewModel
-import de.tastenhalter.core.NoteNames
 import de.tastenhalter.core.Organ
 import de.tastenhalter.midi.BundledSong
 import de.tastenhalter.midi.MidiPart
 import de.tastenhalter.player.MidiPlayer
+import de.tastenhalter.tuning.Temperaments
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -54,272 +72,294 @@ private fun formatTime(us: Long): String {
 @Composable
 fun PlayerScreen(vm: TastenhalterViewModel) {
     val st by vm.player.state.collectAsStateWithLifecycle()
-    val p = vm.player
     val openLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) vm.loadMidi(uri)
     }
-    // Liederliste anfangs offen, solange noch nichts geladen ist.
-    var showSongs by rememberSaveable { mutableStateOf(st.fileName == null) }
+    PlayerContent(
+        st = st,
+        songs = vm.bundledSongs,
+        player = vm.player,
+        onSelect = vm::loadBundled,
+        onOpenFile = { openLauncher.launch(arrayOf("*/*")) },
+    )
+}
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            BigButton(
-                "Datei öffnen …",
-                onClick = { openLauncher.launch(arrayOf("*/*")) },
-                modifier = Modifier.weight(1f),
-                containerColor = PanelColor,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            )
-            if (vm.bundledSongs.isNotEmpty()) {
-                BigButton(
-                    if (showSongs) "Liste zu" else "Mitgelieferte Lieder",
-                    onClick = { showSongs = !showSongs },
-                    modifier = Modifier.weight(1f),
-                    containerColor = if (showSongs) Gold else PanelColor,
-                    contentColor = if (showSongs) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                )
+@Composable
+fun PlayerContent(
+    st: MidiPlayer.UiState,
+    songs: List<BundledSong>,
+    player: MidiPlayer?,
+    onSelect: (BundledSong) -> Unit,
+    onOpenFile: () -> Unit,
+) {
+    var showOptions by rememberSaveable { mutableStateOf(false) }
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val landscape = maxWidth > maxHeight
+        if (landscape) {
+            Row(Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp)) {
+                Column(
+                    Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()).padding(end = 12.dp),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    NowPlaying(st, player) { showOptions = true }
+                }
+                Library(songs, st.fileName, onSelect, onOpenFile, Modifier.weight(1f).fillMaxHeight())
+            }
+        } else {
+            Column(Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp)) {
+                NowPlaying(st, player) { showOptions = true }
+                Spacer(Modifier.height(14.dp))
+                Library(songs, st.fileName, onSelect, onOpenFile, Modifier.weight(1f))
             }
         }
-        if (st.loading) LinearProgressIndicator(Modifier.fillMaxWidth())
-        st.error?.let { MessageBox(it, DangerBright) }
+    }
+    if (showOptions && player != null) {
+        SongOptionsSheet(st, player) { showOptions = false }
+    }
+}
 
-        if (showSongs && vm.bundledSongs.isNotEmpty()) {
-            BundledSongList(
-                songs = vm.bundledSongs,
-                currentTitle = st.fileName,
-                onSelect = { song ->
-                    vm.loadBundled(song)
-                    showSongs = false
-                },
-            )
-        }
-
+@Composable
+private fun NowPlaying(st: MidiPlayer.UiState, p: MidiPlayer?, onOptions: () -> Unit) {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         if (st.fileName == null) {
+            SectionLabel("Kein Lied geladen", Modifier.padding(top = 10.dp))
             Text(
-                "Noch keine Datei geladen. Ein mitgeliefertes Lied wählen, eine .mid-Datei vom Handy öffnen – " +
-                    "oder im Dateimanager auf eine .mid-Datei tippen und „Tastenhalter“ wählen.",
+                "Ein Lied aus der Liste antippen oder eine eigene MIDI-Datei öffnen.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = Palette.Muted,
+                modifier = Modifier.padding(top = 6.dp, bottom = 4.dp),
             )
         } else {
-            LoadedPlayer(st, p)
+            SectionLabel(
+                when (st.status) {
+                    MidiPlayer.Status.PLAYING -> "Wiedergabe"
+                    MidiPlayer.Status.PAUSED -> "Pausiert"
+                    MidiPlayer.Status.STOPPED -> "Bereit"
+                },
+                color = if (st.status == MidiPlayer.Status.PLAYING) Palette.Orange else Palette.Muted,
+            )
+            Text(
+                st.fileName,
+                fontFamily = Serif,
+                fontSize = 24.sp,
+                color = Palette.Text,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+            st.subtitle?.let {
+                Text(it, style = MaterialTheme.typography.bodySmall, color = Palette.Muted, maxLines = 1)
+            }
+
+            var dragPos by remember { mutableStateOf<Float?>(null) }
+            val dur = max(1L, st.durationUs).toFloat()
+            ThinSlider(
+                value = (dragPos ?: st.positionUs.toFloat()) / dur,
+                onChange = { dragPos = it * dur },
+                onFinished = {
+                    dragPos?.let { p?.seekTo(it.toLong()) }
+                    dragPos = null
+                },
+                modifier = Modifier.padding(top = 10.dp),
+            )
+            Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+                Text(formatTime(dragPos?.toLong() ?: st.positionUs), style = MaterialTheme.typography.bodySmall, color = Palette.Muted)
+                Spacer(Modifier.weight(1f))
+                Text(formatTime(st.durationUs), style = MaterialTheme.typography.bodySmall, color = Palette.Muted)
+            }
+            Row(
+                Modifier.padding(top = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(22.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RoundButton(
+                    Icons.Filled.Stop, "Stopp", { p?.stop() }, size = 52.dp,
+                    enabled = st.status != MidiPlayer.Status.STOPPED || st.positionUs > 0,
+                )
+                val playing = st.status == MidiPlayer.Status.PLAYING
+                RoundButton(
+                    if (playing) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                    if (playing) "Pause" else "Start",
+                    { if (playing) p?.pause() else p?.play() },
+                    size = 72.dp,
+                    filled = true,
+                    color = Palette.Orange,
+                )
+                RoundButton(Icons.Outlined.Tune, "Lied-Optionen", onOptions, size = 52.dp)
+            }
+            val info = buildList {
+                if (st.tempoPercent != 100) add("Tempo ${st.tempoPercent} %")
+                if (st.transpose != 0) add("Transponiert ${if (st.transpose > 0) "+" else ""}${st.transpose}")
+                if (st.droppedCount > 0) add("${st.droppedCount} Töne ausgelassen")
+            }
+            if (info.isNotEmpty()) {
+                Text(
+                    info.joinToString("  ·  "),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Palette.Muted,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
         }
+        if (st.loading) {
+            LinearProgressIndicator(
+                Modifier.fillMaxWidth().padding(top = 8.dp),
+                color = Palette.Orange,
+                trackColor = Palette.Line,
+            )
+        }
+        st.error?.let { Banner(it, Palette.Danger, Modifier.padding(top = 8.dp)) }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun BundledSongList(songs: List<BundledSong>, currentTitle: String?, onSelect: (BundledSong) -> Unit) {
+private fun Library(
+    songs: List<BundledSong>,
+    current: String?,
+    onSelect: (BundledSong) -> Unit,
+    onOpenFile: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val groups = remember(songs) { songs.map { it.group }.distinct() }
     var group by rememberSaveable {
-        mutableStateOf(songs.firstOrNull { it.title == currentTitle }?.group ?: groups.firstOrNull().orEmpty())
+        mutableStateOf(songs.firstOrNull { it.title == current }?.group ?: groups.firstOrNull().orEmpty())
     }
-    Panel {
-        Text("Mitgelieferte Lieder (${songs.size})", style = MaterialTheme.typography.titleLarge, color = Gold)
-        if (groups.size > 1) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                groups.forEach { g ->
-                    ChoiceChip(
-                        "$g (${songs.count { it.group == g }})",
-                        selected = g == group,
-                        onClick = { group = g },
-                    )
-                }
-            }
-        }
-        songs.filter { it.group == group || groups.size <= 1 }.forEachIndexed { i, song ->
-            if (i > 0) HorizontalDivider(color = Outline.copy(alpha = 0.5f))
-            val current = song.title == currentTitle
-            Column(
+    Column(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SectionLabel("Lieder", Modifier.weight(1f))
+            Row(
                 Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable { onSelect(song) }
-                    .padding(vertical = 10.dp, horizontal = 4.dp),
+                    .clip(RoundedCornerShape(50))
+                    .clickable(onClick = onOpenFile)
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    song.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (current) Gold else MaterialTheme.colorScheme.onSurface,
-                )
-                Text(
-                    song.composer,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                if (song.license != "Public Domain") {
-                    Text(
-                        song.license,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                Icon(Icons.Outlined.FolderOpen, null, tint = Palette.Muted, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(6.dp))
+                Text("Datei öffnen", style = MaterialTheme.typography.bodyMedium, color = Palette.Muted)
+            }
+        }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            groups.forEach { g -> Pill(g, g == group, { group = g }) }
+        }
+        LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
+            items(songs.filter { it.group == group }, key = { it.file }) { song ->
+                val sel = song.title == current
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(if (sel) Palette.Surface else Color.Transparent)
+                        .clickable { onSelect(song) }
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        Modifier
+                            .width(3.dp)
+                            .height(30.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(if (sel) Palette.Orange else Color.Transparent)
                     )
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            song.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (sel) Palette.Orange else Palette.Text,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            song.composer,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Palette.Muted,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
             }
         }
-        Text(
-            "Quellen: Mutopia Project (mutopiaproject.org) und Wikimedia Commons – gemeinfrei bzw. CC0. " +
-                "Einzelnachweise in der README des Projekts.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LoadedPlayer(st: MidiPlayer.UiState, p: MidiPlayer) {
+private fun SongOptionsSheet(st: MidiPlayer.UiState, p: MidiPlayer, onDismiss: () -> Unit) {
     val cfg by Organ.config.collectAsStateWithLifecycle()
-    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        Panel {
-            Text(st.fileName ?: "", style = MaterialTheme.typography.titleLarge)
-            Text(
-                "Dauer ${formatTime(st.durationUs)} · ${st.noteCount} Noten · ${st.parts.size} Spuren",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                when (st.status) {
-                    MidiPlayer.Status.PLAYING -> "▶ Wiedergabe läuft"
-                    MidiPlayer.Status.PAUSED -> "Pausiert"
-                    MidiPlayer.Status.STOPPED -> "Gestoppt"
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Color(0xFF151412),
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+                .navigationBarsPadding()
+                .padding(bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(st.fileName ?: "", fontFamily = Serif, fontSize = 22.sp, color = Palette.Text, maxLines = 2)
+
+            SectionLabel("Tempo")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                ThinSlider(
+                    value = (st.tempoPercent - 25) / 175f,
+                    onChange = { f -> p.setTempo(((25 + f * 175) / 5f).roundToInt() * 5) },
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    "${st.tempoPercent} %",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Palette.Text,
+                    modifier = Modifier.width(72.dp).padding(start = 12.dp),
+                )
+            }
+            if (st.tempoPercent != 100) {
+                Pill("Originaltempo", false, { p.setTempo(100) })
+            }
+
+            SectionLabel("Transponieren")
+            MiniStepper(
+                when {
+                    st.transpose > 0 -> "+${st.transpose} Halbtöne"
+                    st.transpose < 0 -> "${st.transpose} Halbtöne"
+                    else -> "0 Halbtöne"
                 },
-                style = MaterialTheme.typography.titleMedium,
-                color = when (st.status) {
-                    MidiPlayer.Status.PLAYING -> Ok
-                    MidiPlayer.Status.PAUSED -> Warn
-                    MidiPlayer.Status.STOPPED -> MaterialTheme.colorScheme.onSurfaceVariant
-                },
+                onMinus = { p.setTranspose(st.transpose - 1) },
+                onPlus = { p.setTranspose(st.transpose + 1) },
+                minusEnabled = st.transpose > -12,
+                plusEnabled = st.transpose < 12,
             )
-        }
 
-        // Transport
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            BigButton(
-                if (st.status == MidiPlayer.Status.PAUSED) "Weiter" else "Start",
-                onClick = p::play,
-                enabled = st.status != MidiPlayer.Status.PLAYING,
-                modifier = Modifier.weight(1.2f),
-                containerColor = Ok,
-                contentColor = Color.White,
-                minHeight = 76.dp,
-                leadingIcon = Icons.Filled.PlayArrow,
-            )
-            BigButton(
-                "Pause",
-                onClick = p::pause,
-                enabled = st.status == MidiPlayer.Status.PLAYING,
-                modifier = Modifier.weight(1f),
-                containerColor = Warn,
-                contentColor = Color.Black,
-                minHeight = 76.dp,
-            )
-            BigButton(
-                "Stopp",
-                onClick = p::stop,
-                enabled = st.status != MidiPlayer.Status.STOPPED || st.positionUs > 0,
-                modifier = Modifier.weight(1f),
-                containerColor = Color(0xFF3A3D45),
-                contentColor = Color.White,
-                minHeight = 76.dp,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                SectionLabel("Spuren", Modifier.weight(1f))
+                Pill("Alle", false, { p.selectAll(true) })
+                Spacer(Modifier.width(8.dp))
+                Pill("Keine", false, { p.selectAll(false) })
+            }
+            Card {
+                st.parts.forEachIndexed { i, part ->
+                    if (i > 0) RowDivider()
+                    PartRow(part, part.index in st.selected) { p.togglePart(part.index) }
+                }
+            }
+            val notes = buildList {
+                add("Alles wird auf MIDI-Kanal ${cfg.channel + 1} gespielt.")
+                if (st.foldedCount > 0) add("${st.foldedCount} Noten außerhalb des Umfangs werden oktaviert.")
+                if (st.droppedCount > 0) add("${st.droppedCount} Noten fallen wegen der Grenze von ${cfg.maxPolyphony} Tönen weg.")
+            }
+            Text(notes.joinToString(" "), style = MaterialTheme.typography.bodySmall, color = Palette.Muted)
         }
-
-        // Position
-        var dragPos by remember { mutableStateOf<Float?>(null) }
-        val dur = max(1L, st.durationUs).toFloat()
-        Slider(
-            value = (dragPos ?: st.positionUs.toFloat()).coerceIn(0f, dur),
-            onValueChange = { dragPos = it },
-            onValueChangeFinished = {
-                dragPos?.let { p.seekTo(it.toLong()) }
-                dragPos = null
-            },
-            valueRange = 0f..dur,
-        )
-        Row {
-            Text(
-                formatTime(dragPos?.toLong() ?: st.positionUs),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f),
-            )
-            Text(formatTime(st.durationUs), style = MaterialTheme.typography.titleMedium)
-        }
-
-        HorizontalDivider()
-
-        // Tempo
-        Text("Tempo: ${st.tempoPercent} %", style = MaterialTheme.typography.titleLarge)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SquareButton("−", onClick = { p.setTempo(st.tempoPercent - 5) }, enabled = st.tempoPercent > 25)
-            Slider(
-                value = st.tempoPercent.toFloat(),
-                onValueChange = { p.setTempo((it / 5f).roundToInt() * 5) },
-                valueRange = 25f..200f,
-                steps = (200 - 25) / 5 - 1,
-                modifier = Modifier.weight(1f),
-            )
-            SquareButton("+", onClick = { p.setTempo(st.tempoPercent + 5) }, enabled = st.tempoPercent < 200)
-        }
-        SecondaryButton(
-            "Originaltempo (100 %)",
-            onClick = { p.setTempo(100) },
-            enabled = st.tempoPercent != 100,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Stepper(
-            "Transp.",
-            when {
-                st.transpose > 0 -> "+${st.transpose} HT"
-                st.transpose < 0 -> "${st.transpose} HT"
-                else -> "0 HT"
-            },
-            onMinus = { p.setTranspose(st.transpose - 1) },
-            onPlus = { p.setTranspose(st.transpose + 1) },
-            minusEnabled = st.transpose > -12,
-            plusEnabled = st.transpose < 12,
-        )
-
-        if (st.foldedCount > 0) {
-            Text(
-                "${st.foldedCount} Noten außerhalb ${NoteNames.name(cfg.lowest)}–${NoteNames.name(cfg.highest)} " +
-                    "wurden in den Umfang oktaviert.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
-            )
-        }
-        if (st.droppedCount > 0) {
-            Text(
-                "${st.droppedCount} Noten wegen der Grenze von ${cfg.maxPolyphony} gleichzeitigen Tönen ausgelassen.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Warn,
-            )
-        }
-
-        HorizontalDivider()
-
-        SectionTitle("Spuren")
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            SecondaryButton("Alle", onClick = { p.selectAll(true) }, modifier = Modifier.weight(1f))
-            SecondaryButton("Keine", onClick = { p.selectAll(false) }, modifier = Modifier.weight(1f))
-        }
-        st.parts.forEach { part ->
-            PartRow(part, selected = part.index in st.selected, onToggle = { p.togglePart(part.index) })
-        }
-        Text(
-            "Alle Spuren werden auf MIDI-Kanal ${cfg.channel + 1} gelegt. Schlagzeug (Kanal 10) ist anfangs abgewählt.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Start,
-        )
     }
 }
 
@@ -328,26 +368,29 @@ private fun PartRow(part: MidiPart, selected: Boolean, onToggle: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onToggle)
-            .padding(vertical = 6.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(checked = selected, onCheckedChange = { onToggle() })
-        Spacer(Modifier.width(6.dp))
+        Checkbox(
+            checked = selected,
+            onCheckedChange = { onToggle() },
+            colors = CheckboxDefaults.colors(checkedColor = Palette.Orange, checkmarkColor = Palette.Ground),
+        )
         Column(Modifier.weight(1f)) {
-            val title = buildString {
-                append("Spur ${part.track + 1} · Kanal ${part.channel + 1}")
-                if (part.isDrums) append(" (Schlagzeug)")
-            }
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            if (part.name.isNotBlank()) {
-                Text(part.name, style = MaterialTheme.typography.bodyMedium)
-            }
             Text(
-                "${part.noteCount} Noten · ${NoteNames.name(part.minPitch)} – ${NoteNames.name(part.maxPitch)}",
+                part.name.ifBlank { "Spur ${part.track + 1}" } + if (part.isDrums) " (Schlagzeug)" else "",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Palette.Text,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                "Spur ${part.track + 1} · Kanal ${part.channel + 1} · ${part.noteCount} Noten · " +
+                    "${Temperaments.noteName(part.minPitch)}–${Temperaments.noteName(part.maxPitch)}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = Palette.Muted,
+                maxLines = 1,
             )
         }
     }

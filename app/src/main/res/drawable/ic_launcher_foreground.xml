@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Fünf Orgelpfeifen (Prospekt) -->
+<!-- Eine einzelne Orgelpfeife: Körper mit schmalem Labium, Fuß als Kegel. Schlicht, in Stimmlicht-Orange. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#FFFFC857"
-        android:pathData="M28,48 H36 V72 L32,82 L28,72 Z M39,40 H47 V72 L43,82 L39,72 Z M50,30 H58 V72 L54,82 L50,72 Z M61,40 H69 V72 L65,82 L61,72 Z M72,48 H80 V72 L76,82 L72,72 Z" />
-    <path
-        android:fillColor="#FF1B1D22"
-        android:pathData="M29.5,64 H34.5 V67 H29.5 Z M40.5,64 H45.5 V67 H40.5 Z M51.5,64 H56.5 V67 H51.5 Z M62.5,64 H67.5 V67 H62.5 Z M73.5,64 H78.5 V67 H73.5 Z" />
+        android:fillColor="#FFFFAB52"
+        android:fillType="evenOdd"
+        android:pathData="M45,22 H63 V68 L56.5,88 H51.5 L45,68 Z M49,60 H59 L57,63 H51 Z" />
 </vector>

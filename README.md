@@ -1,33 +1,48 @@
 # Tastenhalter – MIDI-Steuerung für Orgel-Selbstspieleinrichtungen
 
 Android-App zum Ansteuern einer Orgel über einen MIDI-Decoder, der Note-On/Note-Off in Magnetausgänge umsetzt –
-zum Stimmen (Töne und Intervalle halten), zum Testen der Magnete und zum Abspielen von MIDI-Dateien.
+zum Legen der Temperatur nach Gehör, zum Testen der Magnete und zum Abspielen von Liedern.
 
 Kotlin · Jetpack Compose · Android 10+ · nur `android.media.midi`, keine Google-Play-Dienste nötig.
+
+<p>
+  <img src="docs/stimmen.png" width="31%" alt="Stimmen">
+  <img src="docs/lieder.png" width="31%" alt="Lieder">
+</p>
+<p><img src="docs/klaviatur-quer.png" width="64%" alt="Klaviatur im Querformat"></p>
 
 ## Download
 
 Die fertige APK liegt unter [Releases](../../releases). Auf dem Handy herunterladen, öffnen und die Installation
 aus dieser Quelle erlauben.
 
-## Funktionen
+## Aufbau
 
-- **Verbindung**: USB-MIDI (per USB-OTG, z. B. Interface oder Funk-MIDI-Empfänger) und Bluetooth-LE-MIDI.
-  Geräte anzeigen, verbinden, Status, Prüfton a'. USB-MIDI wird beim Einstecken automatisch verbunden (abschaltbar).
-- **Orgel-Einstellungen**: tiefster/höchster Ton, maximale Anzahl gleichzeitiger Töne und MIDI-Kanal –
-  passend zum eigenen Decoder. Voreinstellung: C–g''' (MIDI 36–91, 56 Töne), 15 Töne, Kanal 1.
-- **Klaviatur** über den ganzen Umfang mit Haltemodus (Tippen = an, nochmal Tippen = aus), Oktav-Navigation, Zoom.
-- **Stimmen**: Ton halten, voriger/nächster Ton, Intervall dazu (Terz, Quarte, Quinte, Oktave, Duodezime,
-  Doppeloktave), chromatischer Durchlauf (auf-/abwärts, Tondauer 0,1–10 s, Endlosschleife).
-- **Lieder**: .mid öffnen (auch „Öffnen mit“ aus dem Dateimanager), Spuren/Kanäle auswählen, alles auf den
-  eingestellten Kanal, Noten außerhalb des Umfangs werden oktaviert, Transponieren, Tempo 25–200 %,
-  Start/Pause/Stopp, Spulen, Polyphonie-Grenze. 57 freie Choräle, Kirchenlieder, Advents- und Weihnachtslieder und Choralvorspiele sind mitgeliefert.
-- **NOT-AUS** immer sichtbar: Note Off für alle Töne des Umfangs (+ „All Notes Off“), nach 300 ms wiederholt.
-  Wird außerdem ausgelöst bei Stopp, Liedende, Trennen, Verbindungsverlust, jedem (Wieder-)Verbinden,
-  Ändern der Orgel-Einstellungen und beim Verlassen der App (Home, Bildschirm aus, Dateiauswahl).
-- Bildschirm bleibt an, solange ein Lied läuft, ein Durchlauf läuft oder ein Ton klingt.
+Drei Seiten (unten bzw. im Querformat links), oben immer der rote **Not-Aus**. Alle Einstellungen liegen im
+Einstellungsmenü (Zahnrad).
 
-Die Oberfläche ist auf Deutsch, Tonnamen in Helmholtz-Schreibweise (C, c, c', c'' …; b = Ton zwischen a und h).
+- **Stimmen** – Temperatur legen wie in [Stimmlicht](https://github.com/casualistcode/stimmlicht): In der Mitte
+  eines Quintenzirkels pulsiert ein Licht im Takt der Schwebung des aktuellen Intervalls – orange bei engen,
+  blau bei weiten Intervallen, ruhig bei reinen. *Halten* lässt die Orgel das Intervall selbst spielen;
+  beim Weiterschalten wechselt sie mit. Proben antippen: Licht und Orgel folgen der Probe.
+  Stimmzirkel: Quintenzirkel a–a¹ (4′), Steinway e–e¹, Vallotti, Neidhardt „Dorf“ 1732,
+  „Kleine Stadt“ 1732, „Große Stadt“ 1724. Rechnung und Stimmfolgen wie in Stimmlicht.
+- **Klaviatur** – über den ganzen Umfang, im Hoch- und Querformat. *Halten* rastet Töne ein (z. B. einen
+  Bezugston), *Durchlauf* spielt alle Töne nacheinander zum Prüfen der Magnete.
+- **Lieder** – 57 mitgelieferte Choräle, Kirchenlieder, Advents- und Weihnachtslieder und Choralvorspiele
+  oder eine eigene .mid-Datei (auch „Öffnen mit“ aus dem Dateimanager). Tempo, Transponieren und Spuren über
+  die Lied-Optionen.
+
+**Einstellungen:** Verbindung (USB-MIDI per OTG, Bluetooth LE MIDI, automatisches Verbinden, Prüfton),
+Stimmzirkel und Kammerton, sichtbare Tasten und Durchlauf, Orgel (tiefster/höchster Ton, gleichzeitige Töne,
+MIDI-Kanal; Voreinstellung C–g³ = MIDI 36–91, 15 Töne, Kanal 1).
+
+**Not-Aus:** Note Off für alle Töne des Umfangs (+ „All Notes Off“), nach 300 ms wiederholt. Wird außerdem
+ausgelöst bei Stopp, Liedende, Trennen, Verbindungsverlust, jedem (Wieder-)Verbinden, Ändern der
+Orgel-Einstellungen und beim Verlassen der App. Der Bildschirm bleibt an beim Stimmen, während ein Lied oder
+Durchlauf läuft und solange ein Ton klingt.
+
+Die Oberfläche ist auf Deutsch, Tonnamen wie im Orgelbau (C, c, c¹, c² …; b = Ton zwischen a und h).
 
 ## Mitgelieferte Lieder
 
@@ -132,6 +147,9 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
 Die Release-APK wird mit dem lokalen Debug-Schlüssel signiert, damit sie sich direkt installieren lässt.
+
+Bildschirmfotos aller Seiten (hoch und quer) ohne Handy: `gradlew testDebugUnitTest --tests de.tastenhalter.ScreenshotTest`
+→ `app/build/screenshots/`.
 
 ## Sicherheit
 
