@@ -12,6 +12,8 @@ import de.tastenhalter.core.OrganConfig
 import de.tastenhalter.core.OrganOutput
 import de.tastenhalter.core.OrganSettings
 import de.tastenhalter.midi.BleMidiScanner
+import de.tastenhalter.midi.BundledSong
+import de.tastenhalter.midi.BundledSongs
 import de.tastenhalter.midi.MidiConnection
 import de.tastenhalter.midi.MidiFileParser
 import de.tastenhalter.midi.MidiParseException
@@ -45,6 +47,13 @@ class TastenhalterViewModel(app: Application) : AndroidViewModel(app) {
     val tuning = TuningController(output, viewModelScope)
     val player = MidiPlayer(output, viewModelScope)
     val ble = BleMidiScanner(app)
+
+    /** Mit der App ausgelieferte Lieder (gemeinfrei, aus assets/lieder). */
+    val bundledSongs: List<BundledSong> = runCatching {
+        app.assets.open("${BundledSongs.DIR}/${BundledSongs.INDEX}").bufferedReader(Charsets.UTF_8).use {
+            BundledSongs.parseIndex(it.readText())
+        }
+    }.getOrDefault(emptyList())
 
     private val _tab = MutableStateFlow(Tab.CONNECTION)
     val tab: StateFlow<Tab> = _tab.asStateFlow()
@@ -134,18 +143,33 @@ class TastenhalterViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun loadMidi(uri: Uri) {
+        loadSong {
+            val cr = getApplication<Application>().contentResolver
+            val name = displayName(uri)
+            val bytes = cr.openInputStream(uri)?.use { input ->
+                val data = input.readBytes()
+                if (data.size > 16 * 1024 * 1024) throw MidiParseException("Datei ist zu groß für eine MIDI-Datei.")
+                data
+            } ?: throw MidiParseException("Datei konnte nicht geöffnet werden.")
+            name to bytes
+        }
+    }
+
+    fun loadBundled(song: BundledSong) {
+        loadSong {
+            val bytes = getApplication<Application>().assets.open("${BundledSongs.DIR}/${song.file}").use { it.readBytes() }
+            song.title to bytes
+        }
+    }
+
+    /** Liest und zerlegt eine MIDI-Datei im Hintergrund und übergibt sie an den Player. */
+    private fun loadSong(read: () -> Pair<String, ByteArray>) {
         _tab.value = Tab.PLAYER
         player.setLoading()
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
                 runCatching {
-                    val cr = getApplication<Application>().contentResolver
-                    val name = displayName(uri)
-                    val bytes = cr.openInputStream(uri)?.use { input ->
-                        val data = input.readBytes()
-                        if (data.size > 16 * 1024 * 1024) throw MidiParseException("Datei ist zu groß für eine MIDI-Datei.")
-                        data
-                    } ?: throw MidiParseException("Datei konnte nicht geöffnet werden.")
+                    val (name, bytes) = read()
                     name to MidiFileParser.parse(bytes)
                 }
             }

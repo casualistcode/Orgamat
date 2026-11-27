@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.tastenhalter.TastenhalterViewModel
 import de.tastenhalter.core.NoteNames
 import de.tastenhalter.core.Organ
+import de.tastenhalter.midi.BundledSong
 import de.tastenhalter.midi.MidiPart
 import de.tastenhalter.player.MidiPlayer
 import kotlin.math.max
@@ -54,6 +56,8 @@ fun PlayerScreen(vm: TastenhalterViewModel) {
     val openLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) vm.loadMidi(uri)
     }
+    // Liederliste anfangs offen, solange noch nichts geladen ist.
+    var showSongs by rememberSaveable { mutableStateOf(st.fileName == null) }
 
     Column(
         Modifier
@@ -62,26 +66,82 @@ fun PlayerScreen(vm: TastenhalterViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        BigButton(
-            "MIDI-Datei öffnen …",
-            onClick = { openLauncher.launch(arrayOf("*/*")) },
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = PanelColor,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            BigButton(
+                "Datei öffnen …",
+                onClick = { openLauncher.launch(arrayOf("*/*")) },
+                modifier = Modifier.weight(1f),
+                containerColor = PanelColor,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            )
+            if (vm.bundledSongs.isNotEmpty()) {
+                BigButton(
+                    if (showSongs) "Liste zu" else "Mitgelieferte Lieder",
+                    onClick = { showSongs = !showSongs },
+                    modifier = Modifier.weight(1f),
+                    containerColor = if (showSongs) Gold else PanelColor,
+                    contentColor = if (showSongs) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
         if (st.loading) LinearProgressIndicator(Modifier.fillMaxWidth())
         st.error?.let { MessageBox(it, DangerBright) }
 
+        if (showSongs && vm.bundledSongs.isNotEmpty()) {
+            BundledSongList(
+                songs = vm.bundledSongs,
+                currentTitle = st.fileName,
+                onSelect = { song ->
+                    vm.loadBundled(song)
+                    showSongs = false
+                },
+            )
+        }
+
         if (st.fileName == null) {
             Text(
-                "Noch keine Datei geladen. Eine .mid-Datei vom Handy öffnen – oder im Dateimanager " +
-                    "auf eine .mid-Datei tippen und „Tastenhalter“ wählen.",
+                "Noch keine Datei geladen. Ein mitgeliefertes Lied wählen, eine .mid-Datei vom Handy öffnen – " +
+                    "oder im Dateimanager auf eine .mid-Datei tippen und „Tastenhalter“ wählen.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
             LoadedPlayer(st, p)
         }
+    }
+}
+
+@Composable
+private fun BundledSongList(songs: List<BundledSong>, currentTitle: String?, onSelect: (BundledSong) -> Unit) {
+    Panel {
+        Text("Mitgelieferte Lieder", style = MaterialTheme.typography.titleLarge, color = Gold)
+        songs.forEachIndexed { i, song ->
+            if (i > 0) HorizontalDivider(color = Outline.copy(alpha = 0.5f))
+            val current = song.title == currentTitle
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable { onSelect(song) }
+                    .padding(vertical = 10.dp, horizontal = 4.dp),
+            ) {
+                Text(
+                    song.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (current) Gold else MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    song.composer,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        Text(
+            "Gemeinfreie Sätze aus dem Mutopia Project (mutopiaproject.org).",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
