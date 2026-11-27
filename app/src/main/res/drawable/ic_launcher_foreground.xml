@@ -1,12 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Eine einzelne Orgelpfeife: Körper mit schmalem Labium, Fuß als Kegel. Schlicht, in Stimmlicht-Orange. -->
+<!--
+  Logo im Stil von Stimmlicht: gestrichelter Ring (ein Abschnitt orange), warmer Schein,
+  in der Mitte eine leuchtende Orgeltaste (Form einer c-Taste von oben).
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Schein -->
+    <path android:pathData="M24,54 A30,30 0 1 0 84,54 A30,30 0 1 0 24,54 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="54"
+                android:centerY="54"
+                android:gradientRadius="30">
+                <item android:offset="0" android:color="#4DFF8C1A" />
+                <item android:offset="0.55" android:color="#1AFF8C1A" />
+                <item android:offset="1" android:color="#00FF8C1A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Ring: zwölf Abschnitte wie die Bögen im Quintenzirkel -->
     <path
-        android:fillColor="#FFFFAB52"
-        android:fillType="evenOdd"
-        android:pathData="M45,22 H63 V68 L56.5,88 H51.5 L45,68 Z M49,60 H59 L57,63 H51 Z" />
+        android:strokeColor="#40FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M49.95,23.27 A31,31 0 0 1 58.05,23.27
+            M78.59,35.13 A31,31 0 0 1 82.64,42.14
+            M84.73,49.95 A31,31 0 0 1 84.73,58.05
+            M82.64,65.86 A31,31 0 0 1 78.59,72.87
+            M72.87,78.59 A31,31 0 0 1 65.86,82.64
+            M58.05,84.73 A31,31 0 0 1 49.95,84.73
+            M42.14,82.64 A31,31 0 0 1 35.13,78.59
+            M29.41,72.87 A31,31 0 0 1 25.36,65.86
+            M23.27,58.05 A31,31 0 0 1 23.27,49.95
+            M25.36,42.14 A31,31 0 0 1 29.41,35.13
+            M35.13,29.41 A31,31 0 0 1 42.14,25.36" />
+    <path
+        android:strokeColor="#FFFFAB52"
+        android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:pathData="M65.86,25.36 A31,31 0 0 1 72.87,29.41" />
+
+    <!-- Nachbar-Obertaste als feine Kontur -->
+    <path
+        android:strokeColor="#8CFFAB52"
+        android:strokeWidth="1.4"
+        android:pathData="M56.5,34 H64.5 V54.5 Q64.5,56 63,56 H58 Q56.5,56 56.5,54.5 Z" />
+
+    <!-- Orgeltaste (c-Taste von oben) -->
+    <path android:pathData="M44,34 H55 V58 H60 V71 Q60,74 57,74 H47 Q44,74 44,71 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="52"
+                android:centerY="57"
+                android:gradientRadius="20">
+                <item android:offset="0" android:color="#FFFFE0B3" />
+                <item android:offset="0.44" android:color="#FFFFA53F" />
+                <item android:offset="1" android:color="#FFFF8514" />
+            </gradient>
+        </aapt:attr>
+    </path>
 </vector>

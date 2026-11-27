@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Einfarbige Fassung für „Designte Symbole“ (Android 13+): Ring und Taste -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M49.95,23.27 A31,31 0 0 1 58.05,23.27
+            M65.86,25.36 A31,31 0 0 1 72.87,29.41
+            M78.59,35.13 A31,31 0 0 1 82.64,42.14
+            M84.73,49.95 A31,31 0 0 1 84.73,58.05
+            M82.64,65.86 A31,31 0 0 1 78.59,72.87
+            M72.87,78.59 A31,31 0 0 1 65.86,82.64
+            M58.05,84.73 A31,31 0 0 1 49.95,84.73
+            M42.14,82.64 A31,31 0 0 1 35.13,78.59
+            M29.41,72.87 A31,31 0 0 1 25.36,65.86
+            M23.27,58.05 A31,31 0 0 1 23.27,49.95
+            M25.36,42.14 A31,31 0 0 1 29.41,35.13
+            M35.13,29.41 A31,31 0 0 1 42.14,25.36" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M44,34 H55 V58 H60 V71 Q60,74 57,74 H47 Q44,74 44,71 Z" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.4"
+        android:pathData="M56.5,34 H64.5 V54.5 Q64.5,56 63,56 H58 Q56.5,56 56.5,54.5 Z" />
+</vector>

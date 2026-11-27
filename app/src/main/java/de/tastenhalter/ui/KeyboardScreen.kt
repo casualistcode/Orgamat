@@ -39,7 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.tastenhalter.TastenhalterViewModel
@@ -106,9 +108,16 @@ fun KeyboardContent(
         val landscape = maxWidth > maxHeight
         val autoCount = (maxWidth / 52.dp).toInt().coerceIn(7, total)
         val count = (keysSetting ?: autoCount).coerceIn(7, total)
-        val maxFirst = total - count
+        // Natürliche Tastenlänge: etwa fünfmal so lang wie breit. Ist hochkant Platz für zwei
+        // solche Reihen, kommt eine zweite darüber (wie ein zweites Manual) statt die Tasten zu strecken.
+        val keyLen = maxWidth / count * 5f
+        val rowGap = 20.dp
+        val chrome = 56.dp + 32.dp + 50.dp + 16.dp
+        val twoRows = !landscape && total >= 2 * count && maxHeight - chrome >= keyLen * 2 + rowGap
+        val visible = if (twoRows) 2 * count else count
+        val maxFirst = total - visible
         val first = firstWhiteRaw.coerceIn(0, maxFirst)
-        val last = min(first + count, total) - 1
+        val last = min(first + visible, total) - 1
         val rangeLabel = "${Temperaments.noteName(cfg.whiteKeys[first])} – ${Temperaments.noteName(cfg.whiteKeys[last])}"
 
         val nav: @Composable () -> Unit = {
@@ -192,19 +201,35 @@ fun KeyboardContent(
                     verticalAlignment = Alignment.CenterVertically,
                 ) { nav() }
             }
-            OrganKeyboard(
-                config = cfg,
-                firstWhite = first,
-                whiteCount = count,
-                active = active,
-                held = held,
-                onDown = onDown,
-                onUp = onUp,
-                modifier = Modifier
+            BoxWithConstraints(
+                Modifier
                     .weight(1f)
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-            )
+                contentAlignment = Alignment.Center,
+            ) {
+                val row: @Composable (Int, Dp) -> Unit = { start, h ->
+                    OrganKeyboard(
+                        config = cfg,
+                        firstWhite = start,
+                        whiteCount = count,
+                        active = active,
+                        held = held,
+                        onDown = onDown,
+                        onUp = onUp,
+                        modifier = Modifier.fillMaxWidth().height(h),
+                    )
+                }
+                if (twoRows) {
+                    val h = min(keyLen * 1.1f, (maxHeight - rowGap) / 2)
+                    Column(verticalArrangement = Arrangement.spacedBy(rowGap)) {
+                        row(first + count, h)   // obere Reihe: die höheren Töne
+                        row(first, h)
+                    }
+                } else {
+                    row(first, if (landscape) maxHeight else min(maxHeight, keyLen * 1.1f))
+                }
+            }
             footer()
             if (!landscape) {
                 Row(

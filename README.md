@@ -7,6 +7,7 @@ Kotlin · Jetpack Compose · Android 10+ · nur `android.media.midi`, keine Goog
 
 <p>
   <img src="docs/stimmen.png" width="31%" alt="Stimmen">
+  <img src="docs/klaviatur.png" width="31%" alt="Klaviatur">
   <img src="docs/lieder.png" width="31%" alt="Lieder">
 </p>
 <p><img src="docs/klaviatur-quer.png" width="64%" alt="Klaviatur im Querformat"></p>

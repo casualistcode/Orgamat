@@ -177,7 +177,7 @@ private fun TopBar(status: StatusInfo, onStatus: () -> Unit, onSettings: () -> U
     }
 }
 
-/** NOT-AUS: immer sichtbar, rot. */
+/** NOT-AUS: immer sichtbar, ruhig gehalten – dunkle Fläche, gedämpft roter Rand und Symbol. */
 @Composable
 fun EmergencyStopPill(onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)
@@ -185,14 +185,15 @@ fun EmergencyStopPill(onClick: () -> Unit) {
         Modifier
             .height(44.dp)
             .clip(shape)
-            .background(Palette.Danger)
+            .background(Palette.Stop.copy(alpha = 0.12f))
+            .border(1.dp, Palette.Stop.copy(alpha = 0.55f), shape)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(Icons.Filled.Stop, null, tint = Color.White, modifier = Modifier.size(20.dp))
+        Icon(Icons.Filled.Stop, null, tint = Palette.Stop, modifier = Modifier.size(20.dp))
         Spacer(Modifier.width(6.dp))
-        Text("Not-Aus", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text("Not-Aus", color = Palette.Text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
     }
 }
 
@@ -242,16 +243,18 @@ private fun SideRail(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // NOT-AUS oben
+            val stopShape = RoundedCornerShape(18.dp)
             Column(
                 Modifier
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(Palette.Danger)
+                    .clip(stopShape)
+                    .background(Palette.Stop.copy(alpha = 0.12f))
+                    .border(1.dp, Palette.Stop.copy(alpha = 0.55f), stopShape)
                     .clickable(role = Role.Button, onClick = onEmergencyStop)
                     .padding(horizontal = 10.dp, vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(Icons.Filled.Stop, null, tint = Color.White, modifier = Modifier.size(24.dp))
-                Text("Not-Aus", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Icon(Icons.Filled.Stop, null, tint = Palette.Stop, modifier = Modifier.size(24.dp))
+                Text("Not-Aus", color = Palette.Text, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
             }
             Spacer(Modifier.weight(1f))
             Tab.entries.forEach { t ->

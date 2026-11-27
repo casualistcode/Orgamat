@@ -21,6 +21,8 @@ object Palette {
     val Blue = Color(0xFF7AB8FF)
     val Pure = Color(0xFFEFE2CC)
     val Danger = Color(0xFFE5484D)
+    /** Gedämpftes Rot für den Not-Aus. */
+    val Stop = Color(0xFFE8877C)
     val Ok = Color(0xFF7BC88F)
 
     /** Flächen: Weiß mit wenig Deckkraft auf dem Grund. */
