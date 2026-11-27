@@ -25,7 +25,11 @@ class BundledSongsTest {
 
         val cfg = OrganConfig()
         for (s in songs) {
-            assertEquals("Lizenz von ${s.file}", "Public Domain", s.license)
+            assertTrue(
+                "Lizenz von ${s.file} nicht freigegeben: ${s.license}",
+                listOf("Public Domain", "CC0", "CC BY 3.0", "CC BY 4.0").any { s.license.startsWith(it) },
+            )
+            assertTrue("Quelle fehlt bei ${s.file}", s.sourceUrl.startsWith("https://"))
             assertTrue("Gruppe fehlt bei ${s.file}", s.group != DEFAULT_GROUP)
             val song = MidiFileParser.parse(File(dir, s.file).readBytes())
             val parts = song.parts.filter { !it.isDrums }.map { it.index }.toSet()

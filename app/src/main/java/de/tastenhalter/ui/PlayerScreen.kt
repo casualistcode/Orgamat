@@ -156,10 +156,18 @@ private fun BundledSongList(songs: List<BundledSong>, currentTitle: String?, onS
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (song.license != "Public Domain") {
+                    Text(
+                        song.license,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    )
+                }
             }
         }
         Text(
-            "Gemeinfreie Sätze aus dem Mutopia Project (mutopiaproject.org).",
+            "Quellen: Mutopia Project (mutopiaproject.org) und Wikimedia Commons – gemeinfrei bzw. CC0. " +
+                "Einzelnachweise in der README des Projekts.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
