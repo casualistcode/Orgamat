@@ -23,12 +23,20 @@ class BundledSongsTest {
         val midiFiles = dir.listFiles { f -> f.name.endsWith(".mid") }!!.map { it.name }.toSet()
         assertEquals("Liste und Dateien passen nicht zusammen", midiFiles, songs.map { it.file }.toSet())
 
+        // Die Bibliothek zeigt je Gruppe eine Liste – derselbe Titel darf dort nur einmal stehen.
+        val doubled = songs.groupBy { it.group to it.title }.filterValues { it.size > 1 }.keys
+        assertTrue("Doppelte Titel: $doubled", doubled.isEmpty())
+
         val cfg = OrganConfig()
         for (s in songs) {
             assertTrue(
                 "Lizenz von ${s.file} nicht freigegeben: ${s.license}",
-                listOf("Public Domain", "CC0", "CC BY 3.0", "CC BY 4.0").any { s.license.startsWith(it) },
+                listOf("Public Domain", "CC0", "CC BY 3.0", "CC BY 4.0", "CC BY-SA 3.0").any { s.license.startsWith(it) },
             )
+            // CC BY / CC BY-SA verlangen die Nennung des Urhebers – sie steht in der Komponisten-Zeile.
+            if (s.license.startsWith("CC BY")) {
+                assertTrue("Urheber fehlt bei ${s.file}", s.composer.contains("Gerloff") || s.composer.contains("Satz"))
+            }
             assertTrue("Quelle fehlt bei ${s.file}", s.sourceUrl.startsWith("https://"))
             assertTrue("Gruppe fehlt bei ${s.file}", s.group != DEFAULT_GROUP)
             val song = MidiFileParser.parse(File(dir, s.file).readBytes())

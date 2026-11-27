@@ -12,8 +12,8 @@ android {
         applicationId = "de.tastenhalter"
         minSdk = 29
         targetSdk = 35
-        versionCode = 8
-        versionName = "2.1"
+        versionCode = 9
+        versionName = "2.2"
     }
 
     buildTypes {

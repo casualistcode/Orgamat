@@ -30,8 +30,8 @@ Einstellungsmenü (Zahnrad).
   „Kleine Stadt“ 1732, „Große Stadt“ 1724. Rechnung und Stimmfolgen wie in Stimmlicht.
 - **Klaviatur** – über den ganzen Umfang, im Hoch- und Querformat. *Halten* rastet Töne ein (z. B. einen
   Bezugston), *Durchlauf* spielt alle Töne nacheinander zum Prüfen der Magnete.
-- **Lieder** – 57 mitgelieferte Choräle, Kirchenlieder, Advents- und Weihnachtslieder und Choralvorspiele
-  oder eine eigene .mid-Datei (auch „Öffnen mit“ aus dem Dateimanager). Tempo, Transponieren und Spuren über
+- **Lieder** – 315 Lieder aus dem Gotteslob (Stammteil und Diözesan-Eigenteile) und 57 weitere Choräle,
+  Kirchenlieder, Advents- und Weihnachtslieder und Choralvorspiele, oder eine eigene .mid-Datei (auch „Öffnen mit“ aus dem Dateimanager). Tempo, Transponieren und Spuren über
   die Lied-Optionen.
 
 **Einstellungen:** Verbindung (USB-MIDI per OTG, Bluetooth LE MIDI, automatisches Verbinden, Prüfton),
@@ -49,9 +49,26 @@ Die Oberfläche ist auf Deutsch, Tonnamen wie im Orgelbau (C, c, c¹, c² …; b
 
 Die Sätze stammen aus dem [Mutopia Project](https://www.mutopiaproject.org) und von
 [Wikimedia Commons](https://commons.wikimedia.org) (vor allem Sätze von Peter Gerloff / Rabanus Flavus).
-Alle sind gemeinfrei (Public Domain) oder unter CC0 freigegeben; die Melodien sind alt genug, um
-selbst gemeinfrei zu sein. Die Dateien liegen unter [`app/src/main/assets/lieder`](app/src/main/assets/lieder),
+Die Melodien sind alt genug, um selbst gemeinfrei zu sein. Die Sätze und Tondateien sind gemeinfrei (Public
+Domain) oder unter CC0 freigegeben – bis auf einige Gotteslob-Sätze von Peter Gerloff, die unter
+[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) bzw.
+[CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) stehen (unverändert mitgeliefert; Urheber:
+Peter Gerloff / Rabanus Flavus, Quelle jeweils in `lieder.tsv`). Die Dateien liegen unter [`app/src/main/assets/lieder`](app/src/main/assets/lieder),
 die Liste mit Quellen steht in [`lieder.tsv`](app/src/main/assets/lieder/lieder.tsv).
+
+**Gotteslob**
+
+315 Lieder nach den Nummern des Gotteslob 2013: 200 aus dem Stammteil (Gruppe „Gotteslob“) und 115 aus den
+Eigenteilen Hamburg/Hildesheim/Osnabrück, Freiburg/Rottenburg-Stuttgart, Essen, Limburg, München-Freising,
+Münster, Paderborn, Regensburg und Österreich (Gruppe „Gotteslob – Eigenteile“). Alle Sätze und Tondateien
+stammen von Peter Gerloff (Rabanus Flavus) auf Wikimedia Commons – 282 CC0 oder gemeinfrei, 33 CC BY 3.0
+bzw. CC BY-SA 3.0. Quelle, Lizenz und Melodie stehen bei jedem Lied in `lieder.tsv`. Wo mehrere Nummern
+dieselbe Melodie haben, spielt die App für alle dieselbe Datei; der Titel ist der des Liedes, nach dem die
+Datei benannt ist.
+
+Nicht dabei sind Lieder, deren Melodie noch urheberrechtlich geschützt ist oder deren Herkunft unklar ist
+(GL 188, 210, 360, 425, 464, 479, 483, 537, 548, 552). Jüngere Gotteslob-Lieder gibt es ohnehin nicht als
+freie Dateien.
 
 **Choräle & Kirchenlieder**
 
@@ -160,4 +177,6 @@ Benutzung auf eigene Verantwortung.
 
 ## Lizenz
 
-Code: [MIT](LICENSE). Die mitgelieferten MIDI-Dateien sind gemeinfrei bzw. CC0 (siehe Liederliste oben).
+Code: [MIT](LICENSE). Die mitgelieferten MIDI-Dateien sind gemeinfrei bzw. CC0, einige Gotteslob-Sätze von
+Peter Gerloff CC BY 3.0 bzw. CC BY-SA 3.0 – jeweils angegeben in
+[`lieder.tsv`](app/src/main/assets/lieder/lieder.tsv). Die MIT-Lizenz gilt für diese Dateien nicht.

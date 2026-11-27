@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -145,10 +146,18 @@ private fun NowPlaying(st: MidiPlayer.UiState, p: MidiPlayer?, onOptions: () -> 
                 color = Palette.Text,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 4.dp),
             )
             st.subtitle?.let {
-                Text(it, style = MaterialTheme.typography.bodySmall, color = Palette.Muted, maxLines = 1)
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Palette.Muted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                )
             }
 
             var dragPos by remember { mutableStateOf<Float?>(null) }
@@ -249,7 +258,8 @@ private fun Library(
             groups.forEach { g -> Pill(g, g == group, { group = g }) }
         }
         LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
-            items(songs.filter { it.group == group }, key = { it.file }) { song ->
+            // Eine Datei kann unter mehreren Liednummern stehen (gleiche Melodie) – Schlüssel daher mit Titel.
+            items(songs.filter { it.group == group }, key = { "${it.file}|${it.title}" }) { song ->
                 val sel = song.title == current
                 Row(
                     Modifier

@@ -56,7 +56,7 @@ class ScreenshotTest {
                     Box(Modifier.fillMaxSize().background(Palette.Ground)) {
                         AppFrame(
                             tab = tab,
-                            status = StatusInfo(Palette.Ok, "WMBT MIDI · 2 Töne"),
+                            status = StatusInfo(Palette.Ok, "USB-MIDI · 2 Töne"),
                             onTab = {}, onStatus = {}, onSettings = {}, onEmergencyStop = {},
                         ) { content() }
                     }
@@ -90,11 +90,12 @@ class ScreenshotTest {
     }
 
     @Composable
-    private fun Player() {
+    private fun Player(title: String = "Lobe den Herren") {
+        val song = songs.first { it.title == title }
         PlayerContent(
             st = MidiPlayer.UiState(
-                fileName = "Lobe den Herren",
-                subtitle = "Melodie: Stralsund 1665, Satz anonym",
+                fileName = song.title,
+                subtitle = song.composer,
                 status = MidiPlayer.Status.PAUSED,
                 positionUs = 23_000_000,
                 durationUs = 63_000_000,
@@ -129,7 +130,7 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = "w393dp-h852dp-xxhdpi")
-    fun playerPortrait() = shot("6_lieder_hochkant", Tab.PLAYER) { Player() }
+    fun playerPortrait() = shot("6_lieder_hochkant", Tab.PLAYER) { Player("GL 380 – Großer Gott, wir loben dich") }
 
     @Test
     @Config(qualifiers = "w852dp-h393dp-land-xxhdpi")

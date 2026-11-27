@@ -480,7 +480,9 @@ private fun InfoCard() {
         RowDivider()
         SettingRow(
             "Mitgelieferte Lieder",
-            subtitle = "Mutopia Project und Wikimedia Commons – gemeinfrei bzw. CC0. Einzelnachweise in der README.",
+            subtitle = "Mutopia Project und Wikimedia Commons – gemeinfrei bzw. CC0; einige Sätze von Peter Gerloff " +
+                "(Rabanus Flavus) unter CC BY 3.0 oder CC BY-SA 3.0 (creativecommons.org/licenses). " +
+                "Einzelnachweise in der README.",
         )
     }
     Spacer(Modifier.height(4.dp).widthIn(min = 1.dp))
